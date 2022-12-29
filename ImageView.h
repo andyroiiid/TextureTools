@@ -8,20 +8,21 @@
 #include <QLabel>
 #include <QPixmap>
 
-#include "ImageList.h"
-
 class ImageView : public QWidget {
 Q_OBJECT
 public:
-    ImageView(QWidget *parent, ImageList *imageList);
+    explicit ImageView(QWidget *parent);
 
     void resizeEvent(QResizeEvent *event) override;
 
-private:
-    void changeImage(const QString &image);
+    void setImage(const QString &image);
 
+private:
     void updateImageLabel();
 
-    QPixmap m_pixmap;
     QLabel *m_imageLabel;
+    QLabel *m_infoLabel;
+
+    QImage m_image;
+    QPixmap m_pixmap;
 };

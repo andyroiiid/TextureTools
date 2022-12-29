@@ -5,19 +5,22 @@
 #include "ImageView.h"
 
 #include <QBoxLayout>
-#include <QPixmap>
 #include <QImageReader>
 
-ImageView::ImageView(QWidget *parent, ImageList *imageList)
+ImageView::ImageView(QWidget *parent)
         : QWidget(parent) {
     m_imageLabel = new QLabel("No image", this);
     m_imageLabel->setAlignment(Qt::AlignCenter);
     m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    auto layout = new QVBoxLayout(this);
-    layout->addWidget(m_imageLabel);
+    m_infoLabel = new QLabel("Test", this);
+    m_infoLabel->setAlignment(Qt::AlignCenter);
+    m_infoLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+    m_infoLabel->setMinimumHeight(30);
 
-    connect(imageList, &ImageList::currentImageChanged, this, &ImageView::changeImage);
+    auto layout = new QVBoxLayout(this);
+    layout->addWidget(m_imageLabel, 2);
+    layout->addWidget(m_infoLabel, 0);
 }
 
 void ImageView::resizeEvent(QResizeEvent *event) {
@@ -26,18 +29,19 @@ void ImageView::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
 }
 
-void ImageView::changeImage(const QString &image) {
+void ImageView::setImage(const QString &image) {
     m_imageLabel->clear();
+    m_infoLabel->clear();
 
     QImageReader reader(image);
 
-    QImage newImage = reader.read();
-    if (newImage.isNull()) {
+    m_image = reader.read();
+    if (m_image.isNull()) {
         m_imageLabel->setText(QString("Cannot open image %1: %2").arg(image, reader.errorString()));
         return;
     }
 
-    m_pixmap = QPixmap::fromImage(newImage);
+    m_pixmap = QPixmap::fromImage(m_image);
 
     updateImageLabel();
 }
@@ -48,4 +52,9 @@ void ImageView::updateImageLabel() {
     }
 
     m_imageLabel->setPixmap(m_pixmap.scaled(m_imageLabel->size(), Qt::KeepAspectRatio));
+    m_infoLabel->setText(QString("%1 x %2 (%3 alpha)").arg(
+            QString::number(m_image.width()),
+            QString::number(m_image.height()),
+            m_image.hasAlphaChannel() ? QString("with") : QString("no")
+    ));
 }
