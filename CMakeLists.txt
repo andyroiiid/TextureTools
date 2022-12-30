@@ -15,6 +15,17 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
+set(STB_IMAGE_IO_PLUGIN_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/imageformats)
+add_library(StbImageIOPlugin SHARED
+        StbImageIOHandler.cpp StbImageIOHandler.h
+        StbImageIOPlugin.cpp StbImageIOPlugin.h)
+target_link_libraries(StbImageIOPlugin
+        Qt5::Core
+        Qt5::Gui)
+set_target_properties(StbImageIOPlugin PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${STB_IMAGE_IO_PLUGIN_OUTPUT_DIR})
+# Output plugin json
+configure_file(StbImageIOPlugin.json ${STB_IMAGE_IO_PLUGIN_OUTPUT_DIR}/StbImageIOPlugin.json)
+
 add_executable(TextureTools
         ImageList.cpp ImageList.h
         ImageView.cpp ImageView.h
