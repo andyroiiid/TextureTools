@@ -1,7 +1,17 @@
 {
+  "Name": "StbImageIOPlugin",
   "Keys": [
-    "andrewhuang"
+    "jpg",
+    "jpeg",
+    "png",
+    "tga",
+    "bmp"
   ],
   "MimeTypes": [
+    "image/jpg",
+    "image/jpeg",
+    "image/png",
+    "image/x-tga",
+    "image/bmp"
   ]
 }

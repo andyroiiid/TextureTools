@@ -8,7 +8,7 @@
 
 class StbImageIOPlugin : public QImageIOPlugin {
 Q_OBJECT
-    Q_PLUGIN_METADATA(IID "llc.andrewhuang.TextureTools.StbImageIOPlugin" FILE "StbImageIOPlugin.json")
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QImageIOHandlerFactoryInterface" FILE "StbImageIOPlugin.json")
 
 public:
     Capabilities capabilities(QIODevice *device, const QByteArray &format) const override;

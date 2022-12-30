@@ -6,6 +6,7 @@
 
 #include <QBoxLayout>
 #include <QImageReader>
+#include <QMetaEnum>
 
 ImageView::ImageView(QWidget *parent)
         : QWidget(parent) {
@@ -49,10 +50,12 @@ void ImageView::updateImageLabel() {
         return;
     }
 
+    static const QMetaEnum metaEnum = QMetaEnum::fromType<QImage::Format>();
+
     m_imageLabel->setPixmap(m_pixmap.scaled(m_imageLabel->size(), Qt::KeepAspectRatio));
-    m_infoLabel->setText(QString("%1 x %2 (%3 alpha)").arg(
+    m_infoLabel->setText(QString("%1 x %2 %3").arg(
             QString::number(m_image.width()),
             QString::number(m_image.height()),
-            m_image.hasAlphaChannel() ? QString("with") : QString("no")
+            metaEnum.valueToKey(m_image.format())
     ));
 }

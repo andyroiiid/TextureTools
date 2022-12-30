@@ -6,9 +6,14 @@
 #include "StbImageIOHandler.h"
 
 QImageIOPlugin::Capabilities StbImageIOPlugin::capabilities(QIODevice *device, const QByteArray &format) const {
-    QFlags<Capability> capabilities;
-
-    return capabilities;
+    if (format == "jpg" ||
+        format == "jpeg" ||
+        format == "png" ||
+        format == "tga" ||
+        format == "bmp") {
+        return CanRead;
+    }
+    return {};
 }
 
 QImageIOHandler *StbImageIOPlugin::create(QIODevice *device, const QByteArray &format) const {

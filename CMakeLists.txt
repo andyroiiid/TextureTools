@@ -17,6 +17,7 @@ find_package(Qt5 COMPONENTS
 
 set(STB_IMAGE_IO_PLUGIN_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/imageformats)
 add_library(StbImageIOPlugin SHARED
+        stb_image.h
         StbImageIOHandler.cpp StbImageIOHandler.h
         StbImageIOPlugin.cpp StbImageIOPlugin.h)
 target_link_libraries(StbImageIOPlugin
