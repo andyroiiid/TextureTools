@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     QApplication::setStyle(QStyleFactory::create("fusion"));
 
     MainWindow window;
-    window.showMaximized();
+    window.show();
 
     return QApplication::exec();
 }

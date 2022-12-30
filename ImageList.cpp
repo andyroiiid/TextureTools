@@ -23,6 +23,7 @@ ImageList::ImageList(QWidget *parent)
     buttonsLayout->addWidget(clearButton);
 
     auto layout = new QVBoxLayout(this);
+    layout->setMargin(0);
     layout->addWidget(m_listWidget);
     layout->addLayout(buttonsLayout);
 

@@ -6,8 +6,6 @@
 
 #include <QBoxLayout>
 
-#include "ImageView.h"
-
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent) {
     setWindowTitle("Texture Tools");
@@ -17,13 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     m_imageList = new ImageList(centralWidget);
-    m_imageView = new ImageView(centralWidget);
+    m_imageWorkSpace = new ImageWorkspace(centralWidget);
 
     auto layout = new QHBoxLayout(centralWidget);
-    layout->setMargin(0);
-    layout->setSpacing(0);
     layout->addWidget(m_imageList, 1);
-    layout->addWidget(m_imageView, 2);
+    layout->addWidget(m_imageWorkSpace, 2);
 
-    connect(m_imageList, &ImageList::currentImageChanged, m_imageView, &ImageView::setImage);
+    connect(m_imageList, &ImageList::currentImageChanged, m_imageWorkSpace, &ImageWorkspace::setImage);
 }

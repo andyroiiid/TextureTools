@@ -7,7 +7,7 @@
 #include <QMainWindow>
 
 #include "ImageList.h"
-#include "ImageView.h"
+#include "ImageWorkspace.h"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -16,5 +16,5 @@ public:
 
 private:
     ImageList *m_imageList;
-    ImageView *m_imageView;
+    ImageWorkspace *m_imageWorkSpace;
 };

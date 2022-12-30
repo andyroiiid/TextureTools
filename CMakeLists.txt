@@ -17,13 +17,13 @@ find_package(Qt5 COMPONENTS
 add_executable(TextureTools
         ImageList.cpp ImageList.h
         ImageView.cpp ImageView.h
+        ImageWorkspace.cpp ImageWorkspace.h
         MainWindow.cpp MainWindow.h
         main.cpp)
 target_link_libraries(TextureTools
         Qt5::Core
         Qt5::Gui
-        Qt5::Widgets
-        )
+        Qt5::Widgets)
 
 set(DEBUG_SUFFIX)
 if (MSVC AND CMAKE_BUILD_TYPE MATCHES "Debug")

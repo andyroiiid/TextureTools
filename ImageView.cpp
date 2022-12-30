@@ -33,11 +33,9 @@ void ImageView::setImage(const QString &image) {
     m_imageLabel->clear();
     m_infoLabel->clear();
 
-    QImageReader reader(image);
-
-    m_image = reader.read();
+    m_image.load(image);
     if (m_image.isNull()) {
-        m_imageLabel->setText(QString("Cannot open image %1: %2").arg(image, reader.errorString()));
+        m_imageLabel->setText(QString("Cannot open image %1").arg(image));
         return;
     }
 
