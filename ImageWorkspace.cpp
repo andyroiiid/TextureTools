@@ -9,7 +9,6 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <stb_image.h>
-#include <stb_image_write.h>
 
 ImageWorkspace::ImageWorkspace(QWidget *parent)
         : QWidget(parent) {
@@ -69,17 +68,17 @@ void ImageWorkspace::finishedToDDS(int exitCode, QProcess::ExitStatus exitStatus
     m_toDDSProcess = nullptr;
 }
 
-static constexpr float RGBM_MAX_RANGE = 6.0f;
-
 void RGBMEncode(float &r, float &g, float &b, float &a) {
-    r = std::min(r, RGBM_MAX_RANGE);
-    g = std::min(g, RGBM_MAX_RANGE);
-    b = std::min(b, RGBM_MAX_RANGE);
-    r /= RGBM_MAX_RANGE;
-    g /= RGBM_MAX_RANGE;
-    b /= RGBM_MAX_RANGE;
+    static constexpr float RGBM_MAX_RANGE = 6.0f;
+    static constexpr float RGBM_SCALE = 1.0f / RGBM_MAX_RANGE;
+
+    r = std::min(r * RGBM_SCALE, 1.0f);
+    g = std::min(g * RGBM_SCALE, 1.0f);
+    b = std::min(b * RGBM_SCALE, 1.0f);
+
     a = std::min(std::max(std::max(r, g), std::max(b, 1e-6f)), 1.0f);
     a = std::ceil(a * 255.0f) / 255.0f;
+
     r /= a;
     g /= a;
     b /= a;
@@ -90,24 +89,26 @@ void ImageWorkspace::toRGBM() {
     float *hdrData = stbi_loadf(m_imageFilename.toStdString().c_str(), &width, &height, nullptr, STBI_rgb);
 
     std::vector<uint8_t> pixels;
-    pixels.reserve(width * height * 4);
+    pixels.resize(width * height * 4);
     int i = 0;
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            float r = hdrData[i + 0];
-            float g = hdrData[i + 1];
-            float b = hdrData[i + 2];
+            float r = hdrData[3 * i + 0];
+            float g = hdrData[3 * i + 1];
+            float b = hdrData[3 * i + 2];
             float a;
 
             RGBMEncode(r, g, b, a);
-            pixels.push_back(uint8_t(r * 255.0f));
-            pixels.push_back(uint8_t(g * 255.0f));
-            pixels.push_back(uint8_t(b * 255.0f));
-            pixels.push_back(uint8_t(a * 255.0f));
 
-            i += 3;
+            pixels[4 * i + 0] = uint8_t(r * 255.0f);
+            pixels[4 * i + 1] = uint8_t(g * 255.0f);
+            pixels[4 * i + 2] = uint8_t(b * 255.0f);
+            pixels[4 * i + 3] = uint8_t(a * 255.0f);
+
+            i++;
         }
     }
+    QImage image(pixels.data(), width, height, QImage::Format::Format_RGBA8888);
 
     QString outputImage = QFileDialog::getSaveFileName(
             this,
@@ -115,5 +116,5 @@ void ImageWorkspace::toRGBM() {
             {},
             "PNG File (*.png)"
     );
-    stbi_write_png(outputImage.toStdString().c_str(), width, height, STBI_rgb_alpha, pixels.data(), width * STBI_rgb_alpha);
+    image.save(outputImage);
 }
