@@ -14,7 +14,7 @@ ImageView::ImageView(QWidget *parent)
     m_imageLabel->setAlignment(Qt::AlignCenter);
     m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    m_infoLabel = new QLabel("Test", this);
+    m_infoLabel = new QLabel(this);
     m_infoLabel->setAlignment(Qt::AlignCenter);
     m_infoLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
     m_infoLabel->setMinimumHeight(30);

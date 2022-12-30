@@ -5,10 +5,7 @@
 #include "StbImageIOHandler.h"
 
 #include <QImage>
-
-#define STB_IMAGE_IMPLEMENTATION
-
-#include "stb_image.h"
+#include <stb_image.h>
 
 bool StbImageIOHandler::canRead() const {
     return true;

@@ -6,23 +6,37 @@
 
 #include <QDebug>
 #include <QBoxLayout>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <stb_image.h>
+#include <stb_image_write.h>
 
 ImageWorkspace::ImageWorkspace(QWidget *parent)
         : QWidget(parent) {
     m_imageView = new ImageView(this);
-    m_toDDSButton = new QPushButton("Convert To DDS", this);
+
+    auto buttons = new QWidget(this);
+    m_toDDSButton = new QPushButton("Convert to DDS", buttons);
+    m_toRGBMButton = new QPushButton("Convert to RGBM", buttons);
+    auto buttonsLayout = new QHBoxLayout(buttons);
+    buttonsLayout->setMargin(0);
+    buttonsLayout->addWidget(m_toDDSButton);
+    buttonsLayout->addWidget(m_toRGBMButton);
 
     auto layout = new QVBoxLayout(this);
     layout->setMargin(0);
     layout->addWidget(m_imageView);
-    layout->addWidget(m_toDDSButton);
+    layout->addWidget(buttons);
 
     connect(m_toDDSButton, &QPushButton::pressed, this, &ImageWorkspace::toDDS);
+    connect(m_toRGBMButton, &QPushButton::pressed, this, &ImageWorkspace::toRGBM);
 }
 
 void ImageWorkspace::setImage(const QString &image) {
     m_imageFilename = image;
     m_imageView->setImage(image);
+
+    m_toRGBMButton->setEnabled(QFileInfo(image).suffix() == "hdr");
 }
 
 void ImageWorkspace::toDDS() {
@@ -53,4 +67,53 @@ void ImageWorkspace::finishedToDDS(int exitCode, QProcess::ExitStatus exitStatus
     disconnect(m_toDDSProcess, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, &ImageWorkspace::finishedToDDS);
     delete m_toDDSProcess;
     m_toDDSProcess = nullptr;
+}
+
+static constexpr float RGBM_MAX_RANGE = 6.0f;
+
+void RGBMEncode(float &r, float &g, float &b, float &a) {
+    r = std::min(r, RGBM_MAX_RANGE);
+    g = std::min(g, RGBM_MAX_RANGE);
+    b = std::min(b, RGBM_MAX_RANGE);
+    r /= RGBM_MAX_RANGE;
+    g /= RGBM_MAX_RANGE;
+    b /= RGBM_MAX_RANGE;
+    a = std::min(std::max(std::max(r, g), std::max(b, 1e-6f)), 1.0f);
+    a = std::ceil(a * 255.0f) / 255.0f;
+    r /= a;
+    g /= a;
+    b /= a;
+}
+
+void ImageWorkspace::toRGBM() {
+    int width, height;
+    float *hdrData = stbi_loadf(m_imageFilename.toStdString().c_str(), &width, &height, nullptr, STBI_rgb);
+
+    std::vector<uint8_t> pixels;
+    pixels.reserve(width * height * 4);
+    int i = 0;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            float r = hdrData[i + 0];
+            float g = hdrData[i + 1];
+            float b = hdrData[i + 2];
+            float a;
+
+            RGBMEncode(r, g, b, a);
+            pixels.push_back(uint8_t(r * 255.0f));
+            pixels.push_back(uint8_t(g * 255.0f));
+            pixels.push_back(uint8_t(b * 255.0f));
+            pixels.push_back(uint8_t(a * 255.0f));
+
+            i += 3;
+        }
+    }
+
+    QString outputImage = QFileDialog::getSaveFileName(
+            this,
+            "Convert to RGBM texture",
+            {},
+            "PNG File (*.png)"
+    );
+    stbi_write_png(outputImage.toStdString().c_str(), width, height, STBI_rgb_alpha, pixels.data(), width * STBI_rgb_alpha);
 }

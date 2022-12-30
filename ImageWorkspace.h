@@ -22,8 +22,11 @@ private:
 
     void finishedToDDS(int exitCode, QProcess::ExitStatus exitStatus);
 
+    void toRGBM();
+
     ImageView *m_imageView;
     QPushButton *m_toDDSButton;
+    QPushButton *m_toRGBMButton;
 
     QString m_imageFilename;
 
