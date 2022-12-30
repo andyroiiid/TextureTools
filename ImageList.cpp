@@ -38,7 +38,7 @@ void ImageList::add() {
             this,
             "Add Textures",
             {},
-            "Texture Files (*.jpg *.jpeg *.png *.tga *.bmp)"
+            "Texture Files (*.jpg *.jpeg *.png *.tga *.bmp *.hdr)"
     );
 
     m_images.append(images);

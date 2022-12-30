@@ -6,7 +6,7 @@
 
 #include <QBoxLayout>
 #include <QImageReader>
-#include <QMetaEnum>
+#include <QFileInfo>
 
 ImageView::ImageView(QWidget *parent)
         : QWidget(parent) {
@@ -42,6 +42,8 @@ void ImageView::setImage(const QString &image) {
 
     m_pixmap = QPixmap::fromImage(m_image);
 
+    m_isHdr = QFileInfo(image).suffix() == "hdr";
+
     updateImageLabel();
 }
 
@@ -50,12 +52,26 @@ void ImageView::updateImageLabel() {
         return;
     }
 
-    static const QMetaEnum metaEnum = QMetaEnum::fromType<QImage::Format>();
+    const char *format;
+    switch (m_image.format()) {
+        case QImage::Format_Mono:
+            format = "Mono";
+            break;
+        case QImage::Format_RGB888:
+            format = "RGB";
+            break;
+        case QImage::Format_RGBA8888:
+            format = "RGBA";
+            break;
+        default:
+            format = "Invalid";
+            break;
+    }
 
     m_imageLabel->setPixmap(m_pixmap.scaled(m_imageLabel->size(), Qt::KeepAspectRatio));
     m_infoLabel->setText(QString("%1 x %2 %3").arg(
             QString::number(m_image.width()),
             QString::number(m_image.height()),
-            metaEnum.valueToKey(m_image.format())
+            m_isHdr ? "HDR" : format
     ));
 }

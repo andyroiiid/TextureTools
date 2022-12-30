@@ -10,7 +10,8 @@ QImageIOPlugin::Capabilities StbImageIOPlugin::capabilities(QIODevice *device, c
         format == "jpeg" ||
         format == "png" ||
         format == "tga" ||
-        format == "bmp") {
+        format == "bmp" ||
+        format == "hdr") {
         return CanRead;
     }
     return {};

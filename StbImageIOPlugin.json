@@ -5,13 +5,15 @@
     "jpeg",
     "png",
     "tga",
-    "bmp"
+    "bmp",
+    "hdr"
   ],
   "MimeTypes": [
     "image/jpg",
     "image/jpeg",
     "image/png",
     "image/x-tga",
-    "image/bmp"
+    "image/bmp",
+    "image/vnd.radiance"
   ]
 }

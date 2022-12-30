@@ -23,6 +23,11 @@ bool StbImageIOHandler::read(QImage *image) {
         return false;
     }
 
+    if (channels == 0 || channels == 2) {
+        stbi_image_free(data);
+        return false;
+    }
+
     QImage::Format formats[5] = {
             QImage::Format::Format_Invalid,
             QImage::Format::Format_Mono,

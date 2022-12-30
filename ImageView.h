@@ -25,4 +25,6 @@ private:
 
     QImage m_image;
     QPixmap m_pixmap;
+
+    bool m_isHdr = false;
 };
