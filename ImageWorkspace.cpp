@@ -29,6 +29,8 @@ void ImageWorkspace::toDDS() {
     m_toDDSProcess = new QProcess(this);
     m_toDDSProcess->start("texconv", QStringList{
             "-nologo",
+            "-m",
+            "1",
             "-f",
             "BC1_UNORM_SRGB",
             "-dx9",

@@ -23,7 +23,7 @@ bool StbImageIOHandler::read(QImage *image) {
         return false;
     }
 
-    if (channels == 0 || channels == 2) {
+    if (channels <= 0 || channels == 2 || channels > 4) {
         stbi_image_free(data);
         return false;
     }
